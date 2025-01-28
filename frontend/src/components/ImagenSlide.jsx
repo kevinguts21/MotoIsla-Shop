@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Slider from "react-slick";
-import { Box } from "@mui/material";
-import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
+import { Box, Typography } from "@mui/material";
 
 const ImagenSlide = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -21,7 +20,7 @@ const ImagenSlide = ({ images }) => {
       <Box
         sx={{
           position: "absolute",
-          bottom: 10,
+          bottom: 20,
           left: "50%",
           transform: "translateX(-50%)",
           display: "flex",
@@ -42,8 +41,6 @@ const ImagenSlide = ({ images }) => {
         }}
       />
     ),
-    nextArrow: <ArrowForwardIos style={{ color: "#e94f5b" }} />,
-    prevArrow: <ArrowBackIos style={{ color: "#e94f5b" }} />,
   };
 
   return (
@@ -51,7 +48,7 @@ const ImagenSlide = ({ images }) => {
       sx={{
         position: "relative",
         width: "100%",
-        height: { xs: "250px", md: "510px" }, // Ajuste para vista móvil
+        height: "510px", // Ajuste de la altura para que coincida con 1920x510
         overflow: "hidden",
       }}
     >
@@ -68,37 +65,36 @@ const ImagenSlide = ({ images }) => {
               height: "100%", // Usar toda la altura disponible
             }}
           >
-            <Box
-              sx={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                top: 0,
-                left: 0,
-                background: `linear-gradient(to right, rgba(255,255,255,0), ${getAverageColor(image.src)}), linear-gradient(to left, rgba(255,255,255,0), ${getAverageColor(image.src)})`, // Degradado que hereda el color
-                zIndex: -1,
-              }}
-            />
             <img
               src={image.src}
               alt={image.alt}
               style={{
-                maxWidth: "100%",
-                maxHeight: "100%",
-                objectFit: "contain", // Ajuste para que las imágenes no se deformen
+                width: "100%",
+                height: "100%",
+                objectFit: "cover", // Ajuste para que las imágenes no se deformen
               }}
             />
           </Box>
         ))}
       </Slider>
+
+      {/* Contador de imágenes */}
+      <Typography
+        sx={{
+          position: "absolute",
+          bottom: 10,
+          right: 20,
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
+          color: "#fff",
+          borderRadius: "12px",
+          padding: "4px 8px",
+          fontSize: "14px",
+        }}
+      >
+        {currentIndex + 1}/{images.length}
+      </Typography>
     </Box>
   );
-};
-
-const getAverageColor = (src) => {
-  // Función ficticia para obtener el color promedio de la imagen
-  // Aquí debes implementar tu propia lógica para obtener el color promedio de la imagen
-  return "#000"; // Solo como ejemplo, retornar un color negro
 };
 
 export default ImagenSlide;
