@@ -42,9 +42,10 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://r558nxls-5173.use2.devtunnels.ms",
+    
 ]
-
 ROOT_URLCONF = 'motoisla.urls'
 
 TEMPLATES = [

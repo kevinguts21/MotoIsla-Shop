@@ -44,7 +44,7 @@ const CustomDrawer = ({
           display: "flex",
           flexDirection: "column",
           height: "100vh",
-          backgroundImage: `url(${proof})`,
+          backgroundImage: `url(${proof})`,  
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -99,7 +99,9 @@ const CustomDrawer = ({
           {categories.map((category) => (
             <div key={category.id}>
               <ListItem button onClick={() => handleCategoryClick(category.id)}>
-                <ListItemText primary={category.nombre} />
+                <ListItemText
+                  primary={<b>{category.nombre}</b>} 
+                />
                 {expandedCategory === category.id ? (
                   <ExpandLessIcon />
                 ) : (
@@ -118,7 +120,7 @@ const CustomDrawer = ({
                     backgroundColor: "#ffffffcc", // Semi-transparent white background for subcategories
                     backdropFilter: "blur(5px)", // Blur effect
                     borderRadius: "4px", // Rounded corners
-                    paddingLeft: "16px", // Indentation for subcategory items
+                    paddingLeft: "16px", 
                   }}
                 >
                   <List component="div" disablePadding>

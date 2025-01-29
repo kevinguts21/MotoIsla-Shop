@@ -249,6 +249,7 @@ p {
 
   .contact-link {
     font-size: 0.9rem;
+    color:#f00
   }
 
   .slogan {
@@ -264,12 +265,16 @@ p {
   }
 
   .contact-link:hover {
-    color: #e94f5b;
+    color: gray;
+  }
+
+  .location-string{
+    color: #f00;
   }
 }
 @media screen and (max-width: 450px) {
   .service {
-    width: 85%;
+    width: 90%;
     margin: 25px auto;
   }
   .abaut {
@@ -277,3 +282,5 @@ p {
     margin: 25px auto;
   }
 }
+
+

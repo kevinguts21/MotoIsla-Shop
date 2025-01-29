@@ -1,46 +1,91 @@
-import React, { useState } from "react";
+import React from "react";
 import Slider from "react-slick";
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, useMediaQuery } from "@mui/material";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import desktop from "../assets/Portada/Dekstop.png"; // 1920x510
+import motorcycle from "../assets/Portada/moto.jpg"; // 1920x1080
+import service from "../assets/Portada/Services.png";
+import portada from "../assets/Portada/PortadaDesk.png";
 
-const ImagenSlide = ({ images }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+// Custom Left Arrow
+const CustomPrevArrow = ({ onClick }) => (
+  <IconButton
+    onClick={onClick}
+    sx={{
+      position: "absolute",
+      top: "50%",
+      left: "20px",
+      transform: "translateY(-50%)",
+      zIndex: 2,
+      backgroundColor: "rgba(255, 255, 255, 0.5)",
+      color: "black",
+      "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.7)" },
+    }}
+  >
+    <ArrowBackIosNewIcon />
+  </IconButton>
+);
 
-  // Configuración del slider
+// Custom Right Arrow
+const CustomNextArrow = ({ onClick }) => (
+  <IconButton
+    onClick={onClick}
+    sx={{
+      position: "absolute",
+      top: "50%",
+      right: "20px",
+      transform: "translateY(-50%)",
+      zIndex: 2,
+      backgroundColor: "rgba(255, 255, 255, 0.5)",
+      color: "black",
+      "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.7)" },
+    }}
+  >
+    <ArrowForwardIosIcon />
+  </IconButton>
+);
+
+const ImagenSlide = () => {
+  // Detect if the view is mobile
+  const isMobile = useMediaQuery("(max-width:960px)");
+
+  // Images for desktop and mobile views
+  const desktopImages = [
+    { src: desktop, alt: "Desktop Image 1" },
+    { src: portada, alt: "Desktop Image 2" },
+  ];
+
+  const mobileImages = [
+    { src: service, alt: "Mobile Image 1" },
+    { src: motorcycle, alt: "Mobile Image 2" },
+  ];
+
+  // Select images based on the view
+  const imageList = isMobile ? mobileImages : desktopImages;
+
   const settings = {
-    dots: true, // Muestra los punticos para navegar entre imágenes
-    infinite: true, // Ciclo infinito de imágenes
-    fade: true, // Habilitar transición de desvanecimiento
-    speed: 3000, // Velocidad lenta (en ms)
-    slidesToShow: 1, // Mostrar una imagen a la vez
-    slidesToScroll: 1, // Desplazar una imagen por vez
-    autoplay: true, // Cambio automático
-    autoplaySpeed: 4500, // Tiempo entre cambios (en ms)
-    beforeChange: (_, next) => setCurrentIndex(next), // Cambia el índice al cambiar de imagen
+    dots: true,
+    infinite: true,
+    speed: 900,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true, // Enable auto-slide
+    autoplaySpeed: 4500, // Time between slides (3.5 seconds)
+    nextArrow: <CustomNextArrow />, // Custom Right Arrow
+    prevArrow: <CustomPrevArrow />, // Custom Left Arrow
     appendDots: (dots) => (
-      <Box
-        sx={{
+      <div
+        style={{
           position: "absolute",
-          bottom: 20,
-          left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex",
-          justifyContent: "center",
-          gap: 1,
+          bottom: "20px", // Adjust this value to move dots higher or lower
+          width: "100%",
         }}
       >
-        {dots}
-      </Box>
+        <ul style={{ margin: "0", padding: "0" }}>{dots}</ul>
+      </div>
     ),
-    customPaging: (i) => (
-      <Box
-        sx={{
-          width: 10,
-          height: 10,
-          borderRadius: "50%",
-          backgroundColor: i === currentIndex ? "#e94f5b" : "#ccc",
-        }}
-      />
-    ),
+    pauseOnHover: false, // Pause the autoplay when hovering
   };
 
   return (
@@ -48,51 +93,24 @@ const ImagenSlide = ({ images }) => {
       sx={{
         position: "relative",
         width: "100%",
-        height: "510px", // Ajuste de la altura para que coincida con 1920x510
-        overflow: "hidden",
+        maxWidth: "1920px",
+        margin: "0 auto",
       }}
     >
       <Slider {...settings}>
-        {images.map((image, index) => (
-          <Box
-            key={index}
-            sx={{
-              position: "relative",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              height: "100%", // Usar toda la altura disponible
-            }}
-          >
+        {imageList.map((image, index) => (
+          <Box key={index}>
             <img
               src={image.src}
               alt={image.alt}
               style={{
                 width: "100%",
-                height: "100%",
-                objectFit: "cover", // Ajuste para que las imágenes no se deformen
+                height: "auto",
               }}
             />
           </Box>
         ))}
       </Slider>
-
-      {/* Contador de imágenes */}
-      <Typography
-        sx={{
-          position: "absolute",
-          bottom: 10,
-          right: 20,
-          backgroundColor: "rgba(0, 0, 0, 0.6)",
-          color: "#fff",
-          borderRadius: "12px",
-          padding: "4px 8px",
-          fontSize: "14px",
-        }}
-      >
-        {currentIndex + 1}/{images.length}
-      </Typography>
     </Box>
   );
 };

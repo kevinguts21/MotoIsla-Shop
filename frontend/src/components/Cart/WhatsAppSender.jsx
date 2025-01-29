@@ -13,8 +13,8 @@ const WhatsAppSender = ({ customerName, customerID, customerPhone, cart, totalAm
       Importe Total: ${totalAmount.toFixed(2)} CUP
     `;
 
-    const whatsappLink = `https://wa.me/5355541164?text=${encodeURIComponent(whatsappMessage)}`;
-    window.open(whatsappLink);
+    const whatsappLink = `https://wa.me/5353036894?text=${encodeURIComponent(whatsappMessage)}`;
+    window.location.href = whatsappLink;
   };
 
   return (

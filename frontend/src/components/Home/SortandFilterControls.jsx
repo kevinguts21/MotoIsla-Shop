@@ -1,103 +1,185 @@
-import React from "react";
-import { Box, Select, MenuItem, Typography, IconButton } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Select,
+  MenuItem,
+  IconButton,
+  Typography,
+  Drawer,
+} from "@mui/material";
 import ViewCompactAltOutlinedIcon from "@mui/icons-material/ViewCompactAltOutlined";
 import ViewCompactOutlinedIcon from "@mui/icons-material/ViewCompactOutlined";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import { useMediaQuery } from "@mui/material";
+import FilterDrawer from "./FilterDrawer";
 
 const SortAndFilterControls = ({
-  sortOption = "newest", // Set default sorting option here
+  sortOption = "newest",
   debouncedSort,
-
   setColumns,
   paginatedProducts,
   displayedProducts,
-}) => (
-  <Box
-    sx={{
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 2,
-      width: "100%",
-      maxWidth: "1150px", // Ensure it matches product grid width
-      marginX: "auto",
-      padding: 1.5,
-      border: "1px solid #ddd",
-      borderRadius: 2,
-      boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",
-      backgroundColor: "#f9f9f9",
-    }}
-  >
-    {/* Sort Options */}
-    <Select
-      variant="outlined"
-      value={sortOption}
-      onChange={(e) => debouncedSort(e.target.value)}
-      size="small"
-      displayEmpty
+  onApplyFilters,
+}) => {
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [categoriasSeleccionadas, setCategoriasSeleccionadas] = useState({});
+  const [precioSeleccionado, setPrecioSeleccionado] = useState([0, 0]);
+  const [disponible, setDisponible] = useState(false);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
+  const handleOpenDrawer = () => {
+    setOpenDrawer(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setOpenDrawer(false);
+  };
+
+  const handleResetFilters = () => {
+    setCategoriasSeleccionadas({});
+    setPrecioSeleccionado([0, 0]);
+    setDisponible(false);
+    handleCloseDrawer();
+  };
+
+  const handleApplyFilters = (filteredProducts) => {
+    setFilteredProducts(filteredProducts);
+  };
+
+  
+  return (
+    <Box
       sx={{
-        backgroundColor: "#fff",
-        borderRadius: 1,
-        minWidth: 180,
-        boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
-        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-          borderColor: "#e94f5b", // Change border color when focused
-        },
-        "&:hover .MuiOutlinedInput-notchedOutline": {
-          borderColor: "#e94f5b", // Change border color on hover
-        },
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 3,
+        width: "100%",
+        maxWidth: "1450px",
+        marginX: "auto",
+        padding: 1.5,
+        border: "1px solid #ddd",
+        borderRadius: 2,
+        boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",
+        backgroundColor: "#f9f9f9",
+        flexWrap: isMobile ? "wrap" : "nowrap",
       }}
     >
-      <MenuItem value="" disabled>
-        <em>Ordenar por</em>
-      </MenuItem>
-      <MenuItem value="">Sin Ordenar</MenuItem>
-      <MenuItem value="low-to-high">Menor precio</MenuItem>
-      <MenuItem value="high-to-low">Mayor precio</MenuItem>
-      <MenuItem value="newest">Más recientes</MenuItem> {/* Default option */}
-    </Select>
-
-    {/* Display Information */}
-    <Typography variant="body1" sx={{ color: "gray" }}>
-      Mostrando {paginatedProducts.length} - {displayedProducts.length}
-    </Typography>
-
-    {/* Column View Controls */}
-    <Box sx={{ display: "flex", gap: 1 }}>
-      <IconButton
-        onClick={() => setColumns(4)}
-        disableRipple
+      {/* Sort Options */}
+      <Select
+        variant="outlined"
+        value={sortOption}
+        onChange={(e) => debouncedSort(e.target.value)}
+        size="small"
+        displayEmpty
         sx={{
-          backgroundColor: "inherit",
-          "&:hover": {
-            color: "red",
+          backgroundColor: "#fff",
+          borderRadius: 1,
+          minWidth: 180,
+          boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#e94f5b",
           },
-          "&:focus": {
-            outline: "none",
-            boxShadow: "none",
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#e94f5b",
           },
         }}
       >
-        <ViewCompactAltOutlinedIcon />
-      </IconButton>
-      <IconButton
-        onClick={() => setColumns(3)}
-        disableRipple
+        <MenuItem value="" disabled>
+          <em>Ordenar por</em>
+        </MenuItem>
+        <MenuItem value="">Sin Ordenar</MenuItem>
+        <MenuItem value="low-to-high">Menor precio</MenuItem>
+        <MenuItem value="high-to-low">Mayor precio</MenuItem>
+        <MenuItem value="newest">Más recientes</MenuItem>
+      </Select>
+
+      {/* Column View Controls o Filtro en Móvil */}
+      {isMobile ? (
+        <IconButton
+          onClick={handleOpenDrawer} // Abre el drawer
+          disableRipple
+          sx={{
+            backgroundColor: "inherit",
+            "&:hover": {
+              color: "red",
+            },
+            "&:focus": {
+              outline: "none",
+              boxShadow: "none",
+            },
+          }}
+        >
+          <FilterListIcon />
+        </IconButton>
+      ) : (
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <IconButton
+            onClick={() => setColumns(4)}
+            disableRipple
+            sx={{
+              backgroundColor: "inherit",
+              "&:hover": {
+                color: "red",
+              },
+              "&:focus": {
+                outline: "none",
+                boxShadow: "none",
+              },
+            }}
+          >
+            <ViewCompactAltOutlinedIcon />
+          </IconButton>
+          <IconButton
+            onClick={() => setColumns(3)}
+            disableRipple
+            sx={{
+              backgroundColor: "inherit",
+              "&:hover": {
+                color: "red",
+              },
+              "&:focus": {
+                outline: "none",
+                boxShadow: "none",
+              },
+            }}
+          >
+            <ViewCompactOutlinedIcon />
+          </IconButton>
+        </Box>
+      )}
+
+      {/* Display Information (Desktop Only) */}
+      {!isMobile && (
+        <Typography variant="body1" sx={{ color: "gray" }}>
+          Mostrando {paginatedProducts.length} - {displayedProducts.length}
+        </Typography>
+      )}
+
+      {/* Drawer */}
+      <Drawer
+        anchor="bottom"
+        open={openDrawer}
+        onClose={handleCloseDrawer}
         sx={{
-          backgroundColor: "inherit",
-          "&:hover": {
-            color: "red",
-          },
-          "&:focus": {
-            outline: "none",
-            boxShadow: "none",
+          "& .MuiDrawer-paper": {
+            width: "100%",
+            height: "70%",
+            backgroundColor: "#f9f9f9",
+            borderRight: "1px solid #ddd",
           },
         }}
       >
-        <ViewCompactOutlinedIcon />
-      </IconButton>
+        <FilterDrawer
+          onClose={handleCloseDrawer}
+          onResetFilters={handleResetFilters}
+          onApplyFilters={handleApplyFilters}
+        />
+      </Drawer>
     </Box>
-  </Box>
-);
+  );
+};
 
 export default SortAndFilterControls;

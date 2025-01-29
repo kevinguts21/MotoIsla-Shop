@@ -3,8 +3,23 @@ import { Box, InputBase, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
-const HandleSearch = ({ onSearch, onClearSearch }) => {
+const HandleSearch = ({ onSearch, onClearSearch, data }) => {
   const [searchQuery, setSearchQuery] = useState("");
+
+  const normalizeString = (str) => {
+    return str
+      .normalize("NFD") // Descompone caracteres con tildes
+      .replace(/[\u0300-\u036f]/g, "") // Elimina marcas diacríticas
+      .toLowerCase(); // Convierte a minúsculas
+  };
+
+  const filterData = (query) => {
+    if (!data) return []; // Si no hay datos, devuelve un arreglo vacío
+    const normalizedQuery = normalizeString(query);
+    return data.filter((item) =>
+      normalizeString(item).includes(normalizedQuery)
+    );
+  };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -23,22 +38,23 @@ const HandleSearch = ({ onSearch, onClearSearch }) => {
     }
   };
 
+  // Datos filtrados según la consulta
+  const filteredData = filterData(searchQuery);
+
   return (
     <Box
       sx={{
         display: "flex",
         alignItems: "center",
-        backgroundColor: "rgba(211, 211, 211, 0.7)", // Fondo gris claro
-        borderRadius: "111px",
-        padding: "10px 20px", // Aumentar padding para más espacio interno
-        position: "relative",
-        width: { xs: "90%", sm: "400px" }, // Ancho responsivo
+        backgroundColor: "white",
+        borderRadius: "25px",
+        padding: "5px 10px",
+        width: "100%",
+        maxWidth: "400px",
         transition: "background-color 0.3s",
+        border: "1px solid black", 
         "&:hover": {
-          backgroundColor: "#fff", // Fondo blanco al pasar el mouse
-        },
-        "&:focus-within": {
-          backgroundColor: "#fff", // Fondo blanco al enfocarse
+          backgroundColor: "#f9f9f9",
         },
       }}
     >
@@ -49,54 +65,34 @@ const HandleSearch = ({ onSearch, onClearSearch }) => {
         onKeyDown={handleKeyPress}
         sx={{
           flex: 1,
-          color: "rgba(105, 105, 105, 0.9)", // Gris oscuro para el texto
-          transition: "color 0.3s",
-          fontSize: "18px", // Ajuste de tamaño de texto para mejor legibilidad
-          paddingLeft: "10px", // Espacio interno a la izquierda
-          "&:hover": {
-            color: "#000", // Texto negro al pasar el mouse
-          },
-          "&:focus": {
-            color: "#000", // Texto negro al enfocarse
-          },
+          color: "#333",
+          fontSize: "16px",
+          paddingLeft: "8px",
         }}
       />
 
-      {/* Ícono de búsqueda */}
       <IconButton
         onClick={handleSearch}
-        disableRipple // Desactiva el efecto de onda
         sx={{
-          color: "rgba(105, 105, 105, 0.9)", // Gris oscuro por defecto
-          padding: 0, // Quita el espacio extra alrededor del ícono
+          color: "#666",
           transition: "color 0.3s",
           "&:hover": {
-            color: "red",
-          },
-          "&:focus": {
-            outline: "none", // Evita contornos adicionales en enfoque
+            color: "#000",
           },
         }}
       >
-        <SearchIcon sx={{ color: "inherit", fontSize: "1.5rem" }} />
+        <SearchIcon />
       </IconButton>
 
-      {/* Ícono de basura */}
       {searchQuery.trim() && (
         <IconButton
-        disableRipple
           onClick={handleClear}
           sx={{
-            color: "rgba(105, 105, 105, 0.9)", // Gris oscuro por defecto
-            position: "absolute",
-            right: 35,
+            color: "#666",
             transition: "color 0.3s",
             "&:hover": {
-              color: "red",
+              color: "#000",
             },
-            "&:focus": {
-            outline: "none", // Evita contornos adicionales en enfoque
-          },
           }}
         >
           <DeleteOutlineIcon />

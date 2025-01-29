@@ -76,11 +76,17 @@
   border-radius: 10px;
   padding: 10px;
 }
+.empty-cart-image-mobile {
+  width: 150px;
+  height: auto;
+  margin-top: 20%;
+}
+
 
 /* Enlace de inicio */
 .home-link {
   text-decoration: none;
-  color: grey;
+  color: white;
   font-weight: bold;
   transition: color 0.3s ease;
 }

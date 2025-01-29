@@ -2,69 +2,47 @@
 @import 'slick-carousel/slick/slick.css';
 @import 'slick-carousel/slick/slick-theme.css';
 
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden; /* Previene el desbordamiento horizontal */
+}
+
 .App {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  width: 100%;
   box-sizing: border-box;
   background-color: #fff;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
-body {
-  background-color: white;
-  margin: 0;
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
+
 
 .navbar-gradient {
-  background: rgb(255, 255, 255);
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 1) 5%,
-    rgba(249, 249, 249, 1) 13%,
-    rgba(223, 2, 9, 1) 48%,
-    rgba(224, 9, 9, 1) 70%,
-    rgba(255, 225, 0, 1) 100%
-  );
+  background: rgb(255,255,255);
+  background: linear-gradient(90deg, rgba(255,255,255,1) 30%, rgba(255,225,0,1) 59%, rgba(223,2,9,1) 75%) ;
 }
+
 
 /* Contenedor principal ajustable */
 main {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0;
-  height: 100%;
-  align-items: flex-start;
-}
-
-/* Barra lateral */
-.sidebar {
-  width: 20%;
-  min-height: 100%;
-  padding: 20px;
-  background-color: #f8f9fa;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
-}
-
-/* Contenedor principal */
-.content {
-  flex-grow: 1;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
   width: 100%;
+  overflow-x: hidden;
+}
+
+.sidebar {
+  max-width: 20%;
+  overflow-x: hidden;
+}
+
+.content {
+  max-width: 80%;
+  overflow-x: hidden;
 }
 
 /* Grilla de productos */
@@ -168,3 +146,6 @@ main {
     font-size: 14px;
   }
 }
+
+
+

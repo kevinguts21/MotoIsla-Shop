@@ -57,7 +57,11 @@ const Cart = () => {
     <Box className="cart-container">
       <Toaster />
       <Box className="cart-header">
-        <Typography variant="h4" fontFamily={"Qaranta" }sx={{alignItems:"center"}}>
+        <Typography
+          variant="h4"
+          fontFamily={"Qaranta"}
+          sx={{ alignItems: "center" }}
+        >
           Carrito <ShoppingCartIcon />{" "}
         </Typography>
         {cart.length > 0 && (
@@ -89,14 +93,27 @@ const Cart = () => {
           <img
             src={emptyCartImage}
             alt="Carrito vacío"
-            className="empty-cart-image"
+            className={
+              isMobile ? "empty-cart-image-mobile" : "empty-cart-image"
+            }
           />
           <Typography color="gray" variant="body1">
             Tu carrito está vacío.
           </Typography>
-          <Link to="/" className="home-link">
-            Ir a todos los productos
-          </Link>
+          <Button
+            variant="contained"
+            color="error"
+            sx={{
+              borderRadius: "111px",
+              "&:focus": {
+                outline: "none",
+              },
+            }}
+          >
+            <Link to="/" className="home-link">
+              Ir a todos los productos
+            </Link>
+          </Button>
         </Box>
       ) : (
         <Box className="product-list">
@@ -132,17 +149,17 @@ const Cart = () => {
                     }}
                   >
                     <Link to={`/product/${item.id}`}>
-                    <img
-                      src={`http://localhost:8000/media/Productos/${item.imagen
-                        .split("/")
-                        .pop()}`}
-                      alt={item.nombre}
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        objectFit: "contain",
-                      }}
-                    />
+                      <img
+                        src={`http://localhost:8000/media/Productos/${item.imagen
+                          .split("/")
+                          .pop()}`}
+                        alt={item.nombre}
+                        style={{
+                          width: "80px",
+                          height: "80px",
+                          objectFit: "contain",
+                        }}
+                      />
                     </Link>
                   </Box>
                   <Box
@@ -166,7 +183,7 @@ const Cart = () => {
                     </Typography>
                     <Typography
                       sx={{
-                        fontWeight: "bold",
+                        
                         color: "gray",
                       }}
                     >
@@ -174,7 +191,7 @@ const Cart = () => {
                     </Typography>
                     <Typography
                       sx={{
-                        fontWeight: "bold",
+                        
                         color: "gray",
                       }}
                     >
@@ -192,7 +209,7 @@ const Cart = () => {
                   <Box
                     sx={{
                       display: "flex",
-                      gap: 2,
+                      gap: 1,
                       alignItems: "center",
                     }}
                   >
@@ -254,115 +271,126 @@ const Cart = () => {
             ) : (
               <Box
                 key={item.id}
-                className="product-item-desktop"
+                className="product-item-container"
                 sx={{
                   display: "flex",
-                  gridTemplateColumns: "1fr 1fr 1fr auto",
-                  alignItems: "center",
-                  gap: 40,
+                  flexDirection: "column",
+                  gap: 2,
                   padding: "8px",
                   border: "1px solid #ddd",
                   borderRadius: "20px",
+                  overflow: "auto",
                 }}
               >
-                <Link
-                  to={`/product/${item.id}`}
-                  style={{
-                    width: "350px",
-                  }}
-                >
-                  <img
-                    src={`http://localhost:8000/media/Productos/${item.imagen
-                      .split("/")
-                      .pop()}`}
-                    alt={item.nombre}
-                    style={{
-                      width: "100px",
-                      height: "80px",
-                      objectFit: "contain",
-                    }}
-                  />
-                </Link>
-                <Box sx={{ width: "480px" }}>
-                  <Typography sx={{ fontWeight: "bold" }}>
-                    {item.nombre}
-                  </Typography>
-                </Box>
-
-                <Box sx={{ width: "420px" }}>
-                  <Typography sx={{ fontWeight: "bold" }}>
-                    Precio Unitario
-                  </Typography>
-                  <Typography sx={{ color: "gray" }}>
-                    {item.precio} CUP
-                  </Typography>
-                </Box>
-                <Box sx={{ width: "420px" }}>
-                  <Typography sx={{ fontWeight: "bold" }}>
-                    Importe Total
-                  </Typography>
-                  <Typography sx={{ color: "gray" }}>
-                    {item.precio * item.quantity} CUP
-                  </Typography>
-                </Box>
                 <Box
+                  className="product-item-desktop"
                   sx={{
                     display: "flex",
-                    gap: 3,
+                    flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "center",
+                    gap: 2,
                   }}
                 >
-                  <IconButton
-                    onClick={() =>
-                      updateQuantity(item.id, Math.max(item.quantity - 1, 1))
-                    }
-                    sx={{
-                      color: "grey",
-
-                      "&:hover": {
-                        color: "red",
-                      },
-                      "&:focus": {
-                        outline: "none",
-                        boxShadow: "none",
-                      },
+                  <Link
+                    to={`/product/${item.id}`}
+                    style={{
+                      width: "350px",
                     }}
                   >
-                    <RemoveIcon />
-                  </IconButton>
-                  <Typography>{item.quantity}</Typography>
-                  <IconButton
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    <img
+                      src={`http://localhost:8000/media/Productos/${item.imagen
+                        .split("/")
+                        .pop()}`}
+                      alt={item.nombre}
+                      style={{
+                        width: "100px",
+                        height: "80px",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </Link>
+                  <Box sx={{ width: "480px", alignItems: "center" }}>
+                    <Typography sx={{ fontWeight: "bold" }}>
+                      {item.nombre}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ width: "420px", alignItems: "center" }}>
+                    <Typography >
+                      Precio Unitario
+                    </Typography>
+                    <Typography sx={{ color: "gray" }}>
+                      {item.precio} CUP
+                    </Typography>
+                  </Box>
+                  <Box sx={{ width: "420px", alignItems: "center" }}>
+                    <Typography >
+                      Importe Total
+                    </Typography>
+                    <Typography sx={{ color: "gray" }}>
+                      {item.precio * item.quantity} CUP
+                    </Typography>
+                  </Box>
+                  <Box
                     sx={{
-                      color: "grey",
-
-                      "&:hover": {
-                        color: "green",
-                      },
-                      "&:focus": {
-                        outline: "none",
-                        boxShadow: "none",
-                      },
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    <AddIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handleRemoveItem(item.id)}
-                    sx={{
-                      color: "#d32f2f",
+                    <IconButton
+                      onClick={() =>
+                        updateQuantity(item.id, Math.max(item.quantity - 1, 1))
+                      }
+                      sx={{
+                        color: "grey",
 
-                      "&:hover": {
-                        color: "red",
-                      },
-                      "&:focus": {
-                        outline: "none",
-                        boxShadow: "none",
-                      },
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                        "&:hover": {
+                          color: "red",
+                        },
+                        "&:focus": {
+                          outline: "none",
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      <RemoveIcon />
+                    </IconButton>
+                    <Typography>{item.quantity}</Typography>
+                    <IconButton
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      sx={{
+                        color: "grey",
+
+                        "&:hover": {
+                          color: "green",
+                        },
+                        "&:focus": {
+                          outline: "none",
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleRemoveItem(item.id)}
+                      sx={{
+                        color: "#d32f2f",
+
+                        "&:hover": {
+                          color: "red",
+                        },
+                        "&:focus": {
+                          outline: "none",
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
                 </Box>
               </Box>
             )
@@ -393,12 +421,32 @@ const Cart = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <IconButton onClick={handleCloseDialog} color="primary">
+          <Button
+            variant="outlined"
+            color="primary"
+            sx={{
+              borderRadius: "111px",
+              "&:focus": {
+                outline: "none",
+              },
+            }}
+            onClick={handleCloseDialog}
+          >
             No
-          </IconButton>
-          <IconButton onClick={handleConfirmClear} color="error">
-            Sí
-          </IconButton>
+          </Button>
+          <Button
+            variant="outlined"
+            color="error"
+            sx={{
+              borderRadius: "111px",
+              "&:focus": {
+                outline: "none",
+              },
+            }}
+            onClick={handleConfirmClear}
+          >
+            Si
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

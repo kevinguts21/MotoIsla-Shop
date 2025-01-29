@@ -1,23 +1,22 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Box, CircularProgress, Grid, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  Typography,
+  Button,
+  Divider,
+} from "@mui/material";
+import CleaningServicesOutlinedIcon from "@mui/icons-material/CleaningServicesOutlined";
+import { useMediaQuery } from "@mui/material";
 import { debounce } from "lodash";
 import { useLocation } from "react-router-dom";
 import ProductCard from "./Home/ProductCard";
 import PaginationControls from "./Home/PaginationControls";
 import LoadingOverlay from "./Home/LoadingOverlay";
 import SortAndFilterControls from "./Home/SortandFilterControls";
-import ImagenSlide from "./ImagenSlide";
-import canva from "../assets/Portada/Serviciode Cambio de Aceite.jpg";
+import ScrollToTopButton from "./Home/ScrolltoTop";
 import noResultsImage from "../assets/Not.png";
-import ajuste from "../assets/Portada/Ajuste.jpg"
-
-
-const images = [
-  
-  { src: ajuste, alt: "Oferta 4" },
-  { src: canva, alt: "Oferta 4" },
-  
-];
 
 const Home = ({ filteredProducts, loading }) => {
   const [columns, setColumns] = useState(4);
@@ -30,19 +29,42 @@ const Home = ({ filteredProducts, loading }) => {
   const [sortOption, setSortOption] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [displayedProducts, setDisplayedProducts] = useState(filteredProducts);
-  const productsPerPage = 9;
+  const isMobile = useMediaQuery("(max-width: 600px)");
+  const productsPerPage = isMobile ? 10 : 9; // Ajuste para móvil o escritorio
   const location = useLocation();
 
-  // Filtrar productos por subcategoría o categoría desde la URL
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.productosFiltrados) {
+      setDisplayedProducts(location.state.productosFiltrados);
+      setCurrentPage(1); // Reinicia la paginación si se reciben nuevos productos
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setShowScrollToTop(scrollPosition > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const subcategoria = queryParams.get("subcategoria");
     const categoria = queryParams.get("categoria");
 
-    // Activar el overlay de carga
     setIsLoading(true);
 
-    // Filtrar productos según la subcategoría o categoría
     setTimeout(() => {
       let filtered;
       if (subcategoria) {
@@ -59,10 +81,9 @@ const Home = ({ filteredProducts, loading }) => {
 
       setDisplayedProducts(filtered);
       setIsLoading(false);
-    }, 1000); // Simular un breve tiempo de carga
+    }, 1000);
   }, [location.search, filteredProducts]);
 
-  // Ordenar productos
   const sortProducts = () => {
     if (sortOption === "low-to-high") {
       return [...displayedProducts].sort((a, b) => a.precio - b.precio);
@@ -80,7 +101,6 @@ const Home = ({ filteredProducts, loading }) => {
 
   const sortedProducts = sortProducts();
 
-  // Manejar cambio de moneda
   const handleCurrencyChange = (newCurrency) => {
     setShowBlurLoading(true);
     setLoadingCurrency(true);
@@ -92,16 +112,14 @@ const Home = ({ filteredProducts, loading }) => {
     }, 1500);
   };
 
-  // Convertir precios según moneda
   const convertPrice = (price) => {
-    const exchangeRate = currency === "CUP" ? 320 : 1; // Ejemplo: tasa de cambio
+    const exchangeRate = currency === "CUP" ? 320 : 1;
     return new Intl.NumberFormat("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(price * exchangeRate);
   };
 
-  // Lógica de paginación
   const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
   const paginatedProducts = sortedProducts.slice(
     (currentPage - 1) * productsPerPage,
@@ -116,14 +134,15 @@ const Home = ({ filteredProducts, loading }) => {
   const handlePreviousPage = () =>
     setCurrentPage((prev) => Math.max(prev - 1, 1));
 
-  const debouncedSort = useCallback(
-    debounce((option) => setSortOption(option), 300),
-    []
-  );
+  const debouncedSort = debounce((option) => setSortOption(option), 300);
+
+  const resetFilters = () => {
+    setDisplayedProducts(filteredProducts);
+    setCurrentPage(1); // Reinicia la paginación
+  };
 
   return (
     <Box sx={{ padding: 2 }}>
-      {/* Overlay de carga con fondo borroso y oscuro */}
       {isLoading && (
         <Box
           sx={{
@@ -144,13 +163,7 @@ const Home = ({ filteredProducts, loading }) => {
         </Box>
       )}
 
-      {/* Slider de imágenes */}
-      <Box sx={{ marginBottom: 4 }}>
-        <ImagenSlide images={images} />
-      </Box>
-
-      {/* Controles de Orden y Filtro */}
-      <Box sx={{ marginBottom: 4, display: "flex", justifyContent: "center" }}>
+      <Box sx={{ marginBottom: 2.5,marginRight:"25px" }}>
         <SortAndFilterControls
           currency={currency}
           handleCurrencyChange={handleCurrencyChange}
@@ -161,9 +174,33 @@ const Home = ({ filteredProducts, loading }) => {
           paginatedProducts={paginatedProducts}
           displayedProducts={displayedProducts}
         />
+        
+        {displayedProducts.length !== filteredProducts.length && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: 1,
+            }}
+          >
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={resetFilters}
+              startIcon={<CleaningServicesOutlinedIcon />}
+              sx={{
+                textTransform: "none",
+                fontSize: "0.9rem",
+                borderRadius: "20px",
+                paddingX: 2,
+              }}
+            >
+              Limpiar filtros
+            </Button>
+          </Box>
+        )}
       </Box>
 
-      {/* Lista de productos */}
       <Box sx={{ display: "flex", justifyContent: "center", marginBottom: 4 }}>
         {loading ? (
           <CircularProgress />
@@ -219,7 +256,6 @@ const Home = ({ filteredProducts, loading }) => {
         )}
       </Box>
 
-      {/* Controles de Paginación */}
       <PaginationControls
         currentPage={currentPage}
         totalPages={totalPages}
@@ -228,6 +264,8 @@ const Home = ({ filteredProducts, loading }) => {
         handleNextPage={handleNextPage}
         handlePreviousPage={handlePreviousPage}
       />
+
+      {showScrollToTop && <ScrollToTopButton onClick={scrollToTop} />}
     </Box>
   );
 };

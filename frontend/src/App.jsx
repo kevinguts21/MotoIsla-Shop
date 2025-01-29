@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import SecondaryNavbar from "./components/SecondaryNavbar";
@@ -12,14 +12,16 @@ import { CartProvider } from "./components/Cart/CartContext";
 import { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { useMediaQuery } from "@mui/material";
+import ImagenSlide from "./components/ImagenSlide"; 
 
 function App() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Detect if the screen is mobile
   const isMobile = useMediaQuery("(max-width:600px)");
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -32,22 +34,26 @@ function App() {
   }, []);
 
   const handleSearch = (query) => {
+    setSearchQuery(query); // Save query to state
     setLoading(true);
-    setTimeout(() => {
-      if (query.trim() === "") {
-        setFilteredProducts(products);
-      } else {
-        const filtered = products.filter((product) =>
-          product.nombre.toLowerCase().includes(query.toLowerCase())
-        );
-        setFilteredProducts(filtered);
-      }
-      setLoading(false);
-    }, 500);
+    navigate("/"); // Redirect to Home
   };
 
+  useEffect(() => {
+    if (searchQuery.trim() !== "") {
+      const filtered = products.filter((product) =>
+        product.nombre.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(products);
+    }
+    setLoading(false);
+  }, [searchQuery, products]);
+
   const handleClearSearch = () => {
-    setFilteredProducts(products);
+    setSearchQuery(""); // Clear the search query
+    setFilteredProducts(products); // Reset the filtered products
   };
 
   return (
@@ -78,11 +84,14 @@ function App() {
             <Route
               path="/"
               element={
-                <Home
-                  filteredProducts={filteredProducts}
-                  loading={loading}
-                  isMobile={isMobile}
-                />
+                <>
+                  <ImagenSlide /> {/* Componente ImagenSlide agregado aquí */}
+                  <Home
+                    filteredProducts={filteredProducts}
+                    loading={loading}
+                    isMobile={isMobile}
+                  />
+                </>
               }
             />
             <Route path="/about" element={<About isMobile={isMobile} />} />
