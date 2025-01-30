@@ -44,6 +44,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://r558nxls-5173.use2.devtunnels.ms",
+    'https://motoisla-reactjs.onrender.com',
     
 ]
 ROOT_URLCONF = 'motoisla.urls'
