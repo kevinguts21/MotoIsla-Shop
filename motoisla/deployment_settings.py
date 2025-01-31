@@ -25,7 +25,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://motoisla-reactjs.onrender.com",
 ]
 
-STORAGE = {
+STORAGES = {
     "default": {
         "MOTO ISLA PROJECT": "django.core.files.storage.FileSystemStorage",
     },
