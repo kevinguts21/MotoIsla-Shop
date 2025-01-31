@@ -7,13 +7,12 @@ ALLOWED_HOSTS = [os.environ.get("RENDER_EXTERNAL_HOSTNAME")]
 CSRF_TRUSTED_ORIGINS = ["https://" + os.environ.get("RENDER_EXTERNAL_HOSTNAME")]
 
 DEBUG = False
-SECRET_KEY = os.environ.get ("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -22,8 +21,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
- 'https://motoisla-reactjs.onrender.com',
- ]
+    "https://motoisla-reactjs.onrender.com",
+]
 
 STORAGE = {
     "default": {
@@ -34,10 +33,8 @@ STORAGE = {
     },
 }
 
-DATABASES={
-    
-    'default':dj_database_url.config(
-        default= os.environ['DATABASES_URL'],
-        conn_max_age=600
+DATABASES = {
+    "default": dj_database_url.config(
+        default=os.environ["DATABASES_URL"], conn_max_age=600
     )
 }
