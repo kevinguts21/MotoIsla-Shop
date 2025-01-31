@@ -37,9 +37,14 @@ CORS_ALLOWED_ORIGINS = [
 
 # 📌 🔴 ERROR CORREGIDO: Configuración correcta de `STORAGES`
 STORAGES = {
-    "default": "django.core.files.storage.FileSystemStorage",
-    "staticfiles": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
 }
+
 
 # 📌 🔴 ERROR CORREGIDO: Verificar si `DATABASE_URL` está definida
 DATABASES = {
