@@ -1,6 +1,7 @@
 import os
 import dj_database_url
 from .settings import *
+import os
 
 # Hosts permitidos en producción
 ALLOWED_HOSTS = [
@@ -66,3 +67,6 @@ DATABASES = {
         default=os.environ.get("DATABASE_URL", ""), conn_max_age=600
     )
 }
+
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")

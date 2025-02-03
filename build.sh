@@ -1,12 +1,15 @@
-set -o errexit 
+set -o errexit  # Detiene el script si hay un error
 
-pip install -r requirements.txt
+pip install -r requirements.txt  # Instala las dependencias
 
-python manage.py collectstatic --no-input
+# Verifica si STATIC_ROOT está configurado correctamente
+python -c "import os; print('STATIC_ROOT:', os.getenv('STATIC_ROOT'))"
 
-python manage.py migrate
+# Solo ejecutar collectstatic si STATIC_ROOT está configurado
+if [ -n "$STATIC_ROOT" ]; then
+    python manage.py collectstatic --no-input || echo "⚠️ Warning: collectstatic failed, skipping..."
+else
+    echo "⚠️ Warning: STATIC_ROOT is not set. Skipping collectstatic..."
+fi
 
-#if [[ "$CREATE_SUPERUSER" == "True" ]]; then
-#    python manage.py createsuperuser --no-input
-#fi
-
+python manage.py migrate  # Aplica migraciones
