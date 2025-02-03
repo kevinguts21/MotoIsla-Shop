@@ -3,6 +3,7 @@ import dj_database_url
 from .settings import *
 import os
 
+
 # Hosts permitidos en producción
 ALLOWED_HOSTS = [
     os.environ.get("RENDER_EXTERNAL_HOSTNAME", "motoisla.onrender.com"),
@@ -38,11 +39,13 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # 📌 🔴 INTEGRACIÓN CON CLOUDINARY SOLO EN PRODUCCIÓN
-INSTALLED_APPS += [
+INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",  # Asegura que Whitenoise maneje archivos estáticos
+    "django.contrib.staticfiles",
     "cloudinary",
     "cloudinary_storage",
-    "whitenoise.runserver_nostatic"
 ]
+
 
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME", ""),
@@ -54,14 +57,18 @@ CLOUDINARY_STORAGE = {
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 # 📌 🔴 CONFIGURACIÓN DE STATICFILES PARA PRODUCCIÓN
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STORAGES = {
     "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",  # ✅ Cloudinary almacena imágenes en la nube
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage", 
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
 
 # 📌 🔴 CONFIGURACIÓN DE LA BASE DE DATOS
 DATABASES = {
@@ -69,4 +76,3 @@ DATABASES = {
         default=os.environ.get("DATABASE_URL", ""), conn_max_age=600
     )
 }
-    
