@@ -70,12 +70,11 @@ if DATABASE_URL:
         "default": dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
-            ssl_require=True,  # ✅ Render requiere SSL para PostgreSQL
+            ssl_require=True  # ✅ Render requiere SSL para PostgreSQL
         )
     }
 else:
-    print("❌ ERROR: No se encontró DATABASE_URL en las variables de entorno.")
-    DATABASES = {}  # Dejar vacío para evitar fallos
+    raise Exception("❌ ERROR: No se encontró DATABASE_URL en las variables de entorno de Render.")
     
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")

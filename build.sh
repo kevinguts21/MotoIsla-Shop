@@ -2,14 +2,18 @@ set -o errexit  # Detiene el script si hay un error
 
 pip install -r requirements.txt  # Instala las dependencias
 
-# Verifica si STATIC_ROOT está configurado correctamente
-python -c "import os; print('STATIC_ROOT:', os.getenv('STATIC_ROOT'))"
+# Verificar que STATIC_ROOT esté configurado correctamente
+if [ -z "$STATIC_ROOT" ]; then
+    echo "⚠️ Warning: STATIC_ROOT is not set. Setting it manually..."
+    export STATIC_ROOT="staticfiles"
+fi
 
-# Solo ejecutar collectstatic si STATIC_ROOT está configurado
-if [ -n "$STATIC_ROOT" ]; then
-    python manage.py collectstatic --no-input || echo "⚠️ Warning: collectstatic failed, skipping..."
-else
-    echo "⚠️ Warning: STATIC_ROOT is not set. Skipping collectstatic..."
+python manage.py collectstatic --no-input || echo "⚠️ Warning: collectstatic failed, skipping..."
+
+# 🚀 Verificar si DATABASE_URL está configurada antes de continuar
+if [ -z "$DATABASE_URL" ]; then
+    echo "❌ ERROR: DATABASE_URL no está definida en Render."
+    exit 1
 fi
 
 python manage.py migrate  # Aplica migraciones
