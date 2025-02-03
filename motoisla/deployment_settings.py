@@ -3,6 +3,8 @@ import dj_database_url
 from .settings import *
 import os
 
+print(f"🔍 DATABASE_URL detectada: {os.getenv('DATABASE_URL')}")
+
 # Hosts permitidos en producción
 ALLOWED_HOSTS = [
     os.environ.get("RENDER_EXTERNAL_HOSTNAME", "motoisla.onrender.com"),
@@ -13,6 +15,7 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://" + os.environ.get("RENDER_EXTERNAL_HOSTNAME", "motoisla.onrender.com")
 ]
+
 
 # Modo producción
 DEBUG = False
