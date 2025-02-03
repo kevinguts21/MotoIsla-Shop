@@ -5,7 +5,7 @@ from .settings import *
 # Hosts permitidos en producción
 ALLOWED_HOSTS = [
     os.environ.get("RENDER_EXTERNAL_HOSTNAME", "motoisla.onrender.com"),
-    "motoisla-reactjs.onrender.com"
+    "motoisla-reactjs.onrender.com",
 ]
 
 # Protección CSRF en producción
@@ -35,18 +35,32 @@ CORS_ALLOWED_ORIGINS = [
     "https://motoisla-reactjs.onrender.com",
 ]
 
-# 📌 🔴 ERROR CORREGIDO: Configuración correcta de `STORAGES`
+# 📌 🔴 INTEGRACIÓN CON CLOUDINARY SOLO EN PRODUCCIÓN
+INSTALLED_APPS += [
+    "cloudinary",
+    "cloudinary_storage",
+]
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME", ""),
+    "API_KEY": os.environ.get("CLOUDINARY_API_KEY", ""),
+    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET", ""),
+}
+
+# Usar Cloudinary para archivos subidos por los usuarios
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
+# 📌 🔴 CONFIGURACIÓN DE STATICFILES PARA PRODUCCIÓN
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",  # ✅ Cloudinary almacena imágenes en la nube
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
-
-# 📌 🔴 ERROR CORREGIDO: Verificar si `DATABASE_URL` está definida
+# 📌 🔴 CONFIGURACIÓN DE LA BASE DE DATOS
 DATABASES = {
     "default": dj_database_url.config(
         default=os.environ.get("DATABASE_URL", ""), conn_max_age=600

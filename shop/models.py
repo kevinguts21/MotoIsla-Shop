@@ -1,6 +1,8 @@
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
+from cloudinary.models import CloudinaryField
+
 
 
 class Categoria(models.Model):
@@ -26,7 +28,7 @@ class Producto(models.Model):
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     cantidad_disponible = models.IntegerField()
-    imagen = models.ImageField(upload_to="Productos/")
+    imagen = CloudinaryField('image', null=True, blank=True)
     subcategoria = models.ForeignKey(
         SubCategoria, related_name="productos", on_delete=models.CASCADE, null=True
     )
