@@ -63,18 +63,9 @@ STORAGES = {
 }
 
 # 📌 🔴 CONFIGURACIÓN DE LA BASE DE DATOS
-DATABASE_URL = os.environ.get("DATABASE_URL")
-
-if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=True  # ✅ Render requiere SSL para PostgreSQL
-        )
-    }
-else:
-    raise Exception("❌ ERROR: No se encontró DATABASE_URL en las variables de entorno de Render.")
+DATABASES = {
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL", ""), conn_max_age=600
+    )
+}
     
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
