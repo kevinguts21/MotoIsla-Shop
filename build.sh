@@ -2,10 +2,9 @@ set -o errexit
 
 pip install -r requirements.txt
 
-python manage.py migrate  # 🔴 Primero migra la base de datos
+python manage.py collectstatic --no-input
 
-python manage.py collectstatic --noinput  # 🔵 Luego recopila archivos estáticos
-
+python manage.py migrate
 
 
 #if [[ "$CREATE_SUPERUSER" == "True" ]]; then
