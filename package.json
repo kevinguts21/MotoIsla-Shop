@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@studio-freight/lenis": "^1.0.42"
+  }
+}
