@@ -30,8 +30,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "shop",
-    "cloudinary",
-    "cloudinary_storage",
 ]
 
 MIDDLEWARE = [
@@ -120,5 +118,4 @@ CLOUDINARY_STORAGE = {
     "API_KEY": os.getenv("CLOUDINARY_API_KEY"),
     "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
 }
-
-DEFAULT_FILE_STORAGE= 'cloudinary_storage.cloudianry.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.cloudinary.MediaCloudinaryStorage'

@@ -8,6 +8,7 @@ urlpatterns = [
     path("", include("shop.urls")),
 ]
 
-# ✅ En desarrollo, servir archivos locales de media
+# En desarrollo, servir archivos de media
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
