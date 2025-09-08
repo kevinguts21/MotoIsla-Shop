@@ -10,9 +10,10 @@ import functools
 import inspect
 import logging
 from collections import namedtuple
+from contextlib import nullcontext
 
 from django.core.exceptions import FieldError
-from django.db import DEFAULT_DB_ALIAS, DatabaseError, connections
+from django.db import DEFAULT_DB_ALIAS, DatabaseError, connections, models, transaction
 from django.db.models.constants import LOOKUP_SEP
 from django.utils import tree
 from django.utils.functional import cached_property
@@ -98,6 +99,45 @@ class Q(tree.Node):
         query.promote_joins(joins)
         return clause
 
+    def replace_expressions(self, replacements):
+        if not replacements:
+            return self
+        clone = self.create(connector=self.connector, negated=self.negated)
+        for child in self.children:
+            child_replacement = child
+            if isinstance(child, tuple):
+                lhs, rhs = child
+                if LOOKUP_SEP in lhs:
+                    path, lookup = lhs.rsplit(LOOKUP_SEP, 1)
+                else:
+                    path = lhs
+                    lookup = None
+                field = models.F(path)
+                if (
+                    field_replacement := field.replace_expressions(replacements)
+                ) is not field:
+                    # Handle the implicit __exact case by falling back to an
+                    # extra transform when get_lookup returns no match for the
+                    # last component of the path.
+                    if lookup is None:
+                        lookup = "exact"
+                    if (lookup_class := field_replacement.get_lookup(lookup)) is None:
+                        if (
+                            transform_class := field_replacement.get_transform(lookup)
+                        ) is not None:
+                            field_replacement = transform_class(field_replacement)
+                            lookup = "exact"
+                            lookup_class = field_replacement.get_lookup(lookup)
+                    if rhs is None and lookup == "exact":
+                        lookup_class = field_replacement.get_lookup("isnull")
+                        rhs = True
+                    if lookup_class is not None:
+                        child_replacement = lookup_class(field_replacement, rhs)
+            else:
+                child_replacement = child.replace_expressions(replacements)
+            clone.children.append(child_replacement)
+        return clone
+
     def flatten(self):
         """
         Recursively yield this Q object and all subexpressions, in depth-first
@@ -130,14 +170,21 @@ class Q(tree.Node):
                 value = Value(value)
             query.add_annotation(value, name, select=False)
         query.add_annotation(Value(1), "_check")
+        connection = connections[using]
         # This will raise a FieldError if a field is missing in "against".
-        if connections[using].features.supports_comparing_boolean_expr:
+        if connection.features.supports_comparing_boolean_expr:
             query.add_q(Q(Coalesce(self, True, output_field=BooleanField())))
         else:
             query.add_q(self)
         compiler = query.get_compiler(using=using)
+        context_manager = (
+            transaction.atomic(using=using)
+            if connection.in_atomic_block
+            else nullcontext()
+        )
         try:
-            return compiler.execute_sql(SINGLE) is not None
+            with context_manager:
+                return compiler.execute_sql(SINGLE) is not None
         except DatabaseError as e:
             logger.warning("Got a database error calling check() on %r: %s", self, e)
             return True
@@ -212,7 +259,7 @@ class DeferredAttribute:
             # might be able to reuse the already loaded value. Refs #18343.
             val = self._check_parent_chain(instance)
             if val is None:
-                if instance.pk is None and self.field.generated:
+                if not instance._is_pk_set() and self.field.generated:
                     raise AttributeError(
                         "Cannot read a generated field from an unsaved model."
                     )
